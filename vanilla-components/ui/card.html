@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Component</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 40px;
+            background: #f8f9fa;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        /* Card Base Styles */
+        .card {
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            gap: 6px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.2;
+            margin: 0 0 8px 0;
+            color: #111827;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .card-content {
+            padding: 24px;
+            padding-top: 0;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            padding: 24px;
+            border-top: 1px solid #f3f4f6;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Card Variants */
+        .card-elevated {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-flat {
+            border: none;
+            background: #f9fafb;
+        }
+
+        .card-outlined {
+            border: 2px solid #e5e7eb;
+            box-shadow: none;
+        }
+
+        /* Interactive elements */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid #d1d5db;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: inherit;
+            outline: none;
+            background: white;
+            color: #374151;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+
+        .btn:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #374151;
+            margin-right: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .user-details h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            color: #111827;
+        }
+
+        .user-details p {
+            margin: 0;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge-error {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .code-example {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Card Component</h1>
+        <p>A flexible content container with header, body, and footer sections.</p>
+
+        <div class="demo-section">
+            <h3>Basic Card Structure</h3>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Basic Card</h3>
+                        <p class="card-description">This is a basic card with header, content, and footer.</p>
+                    </div>
+                    <div class="card-content">
+                        <p>This is the main content area of the card. You can put any content here including text, images, forms, or other components.</p>
+                    </div>
+                    <div class="card-footer">
+                        <span>Last updated: 2 hours ago</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Card with Actions</h3>
+                        <p class="card-description">Cards can include action buttons in the footer.</p>
+                    </div>
+                    <div class="card-content">
+                        <p>This card demonstrates how to include action buttons in the footer area.</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary">Primary Action</button>
+                        <button class="btn">Secondary</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Card Variants</h3>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Default Card</h3>
+                        <p class="card-description">Standard card with border and subtle shadow.</p>
+                    </div>
+                    <div class="card-content">
+                        <p>This is the default card style with a border and subtle shadow on hover.</p>
+                    </div>
+                </div>
+
+                <div class="card card-elevated">
+                    <div class="card-header">
+                        <h3 class="card-title">Elevated Card</h3>
+                        <p class="card-description">Card with enhanced shadow for emphasis.</p>
+                    </div>
+                    <div class="card-content">
+                        <p>This card has an elevated appearance with a more prominent shadow.</p>
+                    </div>
+                </div>
+
+                <div class="card card-flat">
+                    <div class="card-header">
+                        <h3 class="card-title">Flat Card</h3>
+                        <p class="card-description">Minimal card without borders or shadows.</p>
+                    </div>
+                    <div class="card-content">
+                        <p>This card has a flat design with no borders or shadows.</p>
+                    </div>
+                </div>
+
+                <div class="card card-outlined">
+                    <div class="card-header">
+                        <h3 class="card-title">Outlined Card</h3>
+                        <p class="card-description">Card with prominent border styling.</p>
+                    </div>
+                    <div class="card-content">
+                        <p>This card emphasizes the border for a more defined appearance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Dashboard-style Cards</h3>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Revenue Statistics</h3>
+                        <p class="card-description">Monthly revenue breakdown</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">$24,500</div>
+                                <div class="stat-label">This Month</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">$18,200</div>
+                                <div class="stat-label">Last Month</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">+34.6%</div>
+                                <div class="stat-label">Growth</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">156</div>
+                                <div class="stat-label">Transactions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Team Members</h3>
+                        <p class="card-description">Active team members and their roles</p>
+                    </div>
+                    <div class="card-content">
+                        <div class="user-info">
+                            <div class="avatar">JD</div>
+                            <div class="user-details">
+                                <h4>John Doe</h4>
+                                <p>Product Manager</p>
+                            </div>
+                        </div>
+                        <div class="user-info">
+                            <div class="avatar">SM</div>
+                            <div class="user-details">
+                                <h4>Sarah Miller</h4>
+                                <p>Lead Developer</p>
+                            </div>
+                        </div>
+                        <div class="user-info">
+                            <div class="avatar">RJ</div>
+                            <div class="user-details">
+                                <h4>Robert Johnson</h4>
+                                <p>UI/UX Designer</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn">View All Members</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Project Status</h3>
+                        <p class="card-description">Current project progress and milestones</p>
+                    </div>
+                    <div class="card-content">
+                        <div style="margin-bottom: 16px;">
+                            <span class="badge badge-success">In Progress</span>
+                            <span class="badge badge-warning">Review</span>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Overall Progress</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Tasks Completed</span>
+                                <span>12 of 16</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Deadline</span>
+                                <span>Dec 31, 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary">View Details</button>
+                        <button class="btn">Update Status</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Interactive Demo</h3>
+            <div style="background: white; padding: 20px; border-radius: 6px; margin: 20px 0;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label for="cardTitle" style="display: block; font-weight: 500; margin-bottom: 5px;">Card Title:</label>
+                        <input type="text" id="cardTitle" value="Sample Card" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="cardDescription" style="display: block; font-weight: 500; margin-bottom: 5px;">Description:</label>
+                        <input type="text" id="cardDescription" value="This is a sample description" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="cardVariant" style="display: block; font-weight: 500; margin-bottom: 5px;">Variant:</label>
+                        <select id="cardVariant" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px;">
+                            <option value="">Default</option>
+                            <option value="card-elevated">Elevated</option>
+                            <option value="card-flat">Flat</option>
+                            <option value="card-outlined">Outlined</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="max-width: 400px; margin: 0 auto;">
+                    <div id="demo-card" class="card">
+                        <div class="card-header">
+                            <h3 id="demo-title" class="card-title">Sample Card</h3>
+                            <p id="demo-description" class="card-description">This is a sample description</p>
+                        </div>
+                        <div class="card-content">
+                            <p>This is the content area of the card. You can customize the title and description using the controls above.</p>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary" onclick="alert('Primary action clicked!')">Action</button>
+                            <button class="btn" onclick="alert('Secondary action clicked!')">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-example">
+            <h4 style="margin-top: 0; color: #60a5fa;">HTML Structure</h4>
+            <pre>&lt;div class="card"&gt;
+    &lt;div class="card-header"&gt;
+        &lt;h3 class="card-title"&gt;Card Title&lt;/h3&gt;
+        &lt;p class="card-description"&gt;Card description text&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="card-content"&gt;
+        &lt;p&gt;Main content goes here&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="card-footer"&gt;
+        &lt;button class="btn btn-primary"&gt;Primary&lt;/button&gt;
+        &lt;button class="btn"&gt;Secondary&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+        </div>
+    </div>
+
+    <script>
+        // Interactive demo functionality
+        function updateDemoCard() {
+            const title = document.getElementById('cardTitle').value;
+            const description = document.getElementById('cardDescription').value;
+            const variant = document.getElementById('cardVariant').value;
+
+            // Update content
+            document.getElementById('demo-title').textContent = title;
+            document.getElementById('demo-description').textContent = description;
+
+            // Update variant class
+            const card = document.getElementById('demo-card');
+            card.className = 'card';
+            if (variant) {
+                card.classList.add(variant);
+            }
+        }
+
+        // Add hover effects to all cards
+        function addCardInteractions() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        }
+
+        // Animate progress bars
+        function animateProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 500);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDemoCard();
+            addCardInteractions();
+            animateProgressBars();
+
+            // Add event listeners for demo controls
+            ['cardTitle', 'cardDescription', 'cardVariant'].forEach(id => {
+                const element = document.getElementById(id);
+                element.addEventListener('input', updateDemoCard);
+                element.addEventListener('change', updateDemoCard);
+            });
+        });
+    </script>
+</body>
+</html>

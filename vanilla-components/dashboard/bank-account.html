@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Account Component</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 40px;
+            background: #f8f9fa;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        /* Bank Account Component Styles */
+        .bank-account {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-top: 16px;
+            transition: opacity 0.2s ease;
+        }
+
+        .bank-account.disabled {
+            opacity: 0.6;
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            margin-right: 32px;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #374151;
+            font-size: 11px;
+        }
+
+        .account-details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .account-name {
+            font-weight: 500;
+            line-height: 1;
+            margin-bottom: 4px;
+            font-size: 14px;
+            color: #111827;
+        }
+
+        .account-balance {
+            color: #878787;
+            font-size: 14px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .account-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-trigger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: #6b7280;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-trigger:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            z-index: 1000;
+            padding: 4px 0;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #f3f4f6;
+        }
+
+        .dropdown-separator {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 4px 0;
+        }
+
+        .dropdown-item.danger {
+            color: #dc2626;
+        }
+
+        /* Switch Component */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #3b82f6;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .slider:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-button:hover {
+            color: #374151;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: inherit;
+            outline: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin-right: 8px;
+        }
+
+        .button-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: #2563eb;
+        }
+
+        .button-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border-color: #d1d5db;
+        }
+
+        .button-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .button-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .button-danger:hover {
+            background: #dc2626;
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .demo-controls {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .control-group input, .control-group select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .accounts-list {
+            background: white;
+            border-radius: 6px;
+            padding: 20px;
+        }
+
+        .code-example {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bank Account Component</h1>
+        <p>A dashboard component for managing bank accounts with edit, import, and delete functionality.</p>
+
+        <div class="demo-section">
+            <h3>Interactive Demo</h3>
+            
+            <div class="demo-controls">
+                <h4>Add New Account</h4>
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label for="accountName">Account Name:</label>
+                        <input type="text" id="accountName" placeholder="e.g., Chase Checking">
+                    </div>
+                    <div class="control-group">
+                        <label for="accountBalance">Balance:</label>
+                        <input type="number" id="accountBalance" placeholder="e.g., 5000" step="0.01">
+                    </div>
+                    <div class="control-group">
+                        <label for="accountCurrency">Currency:</label>
+                        <select id="accountCurrency">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="SEK">SEK</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="accountType">Account Type:</label>
+                        <select id="accountType">
+                            <option value="checking">Checking</option>
+                            <option value="savings">Savings</option>
+                            <option value="credit">Credit Card</option>
+                            <option value="investment">Investment</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="button button-primary" onclick="addAccount()" style="margin-top: 15px;">
+                    Add Account
+                </button>
+            </div>
+
+            <div class="accounts-list">
+                <h4>Bank Accounts</h4>
+                <div id="accountsList">
+                    <!-- Accounts will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample accounts for demo -->
+        <div class="demo-section">
+            <h3>Sample Accounts</h3>
+            <div class="accounts-list">
+                <div class="bank-account">
+                    <div class="account-info">
+                        <div class="avatar">CC</div>
+                        <div class="account-details">
+                            <div>
+                                <div class="account-name">Chase Checking</div>
+                            </div>
+                            <div class="account-balance">$15,234.56</div>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <div class="dropdown">
+                            <button class="dropdown-trigger" onclick="toggleDropdown(this)">
+                                ⋯
+                            </button>
+                            <div class="dropdown-content">
+                                <button class="dropdown-item" onclick="editAccount('chase-checking')">Edit</button>
+                                <div class="dropdown-separator"></div>
+                                <button class="dropdown-item" onclick="importTransactions('chase-checking')">Import</button>
+                                <div class="dropdown-separator"></div>
+                                <button class="dropdown-item danger" onclick="confirmDelete('chase-checking')">Remove</button>
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked onchange="toggleAccount(this, 'chase-checking')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bank-account">
+                    <div class="account-info">
+                        <div class="avatar">BS</div>
+                        <div class="account-details">
+                            <div>
+                                <div class="account-name">Bank of America Savings</div>
+                            </div>
+                            <div class="account-balance">$25,789.12</div>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <div class="dropdown">
+                            <button class="dropdown-trigger" onclick="toggleDropdown(this)">
+                                ⋯
+                            </button>
+                            <div class="dropdown-content">
+                                <button class="dropdown-item" onclick="editAccount('boa-savings')">Edit</button>
+                                <div class="dropdown-separator"></div>
+                                <button class="dropdown-item" onclick="importTransactions('boa-savings')">Import</button>
+                                <div class="dropdown-separator"></div>
+                                <button class="dropdown-item danger" onclick="confirmDelete('boa-savings')">Remove</button>
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked onchange="toggleAccount(this, 'boa-savings')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bank-account disabled">
+                    <div class="account-info">
+                        <div class="avatar">CC</div>
+                        <div class="account-details">
+                            <div>
+                                <div class="account-name">Citi Credit Card</div>
+                            </div>
+                            <div class="account-balance">-$1,234.00</div>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <div class="dropdown">
+                            <button class="dropdown-trigger" onclick="toggleDropdown(this)">
+                                ⋯
+                            </button>
+                            <div class="dropdown-content">
+                                <button class="dropdown-item" onclick="editAccount('citi-credit')">Edit</button>
+                                <div class="dropdown-separator"></div>
+                                <button class="dropdown-item" onclick="importTransactions('citi-credit')">Import</button>
+                                <div class="dropdown-separator"></div>
+                                <button class="dropdown-item danger" onclick="confirmDelete('citi-credit')">Remove</button>
+                            </div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" onchange="toggleAccount(this, 'citi-credit')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-example">
+            <h4 style="margin-top: 0; color: #60a5fa;">HTML Structure</h4>
+            <pre>&lt;div class="bank-account"&gt;
+    &lt;div class="account-info"&gt;
+        &lt;div class="avatar"&gt;CC&lt;/div&gt;
+        &lt;div class="account-details"&gt;
+            &lt;div&gt;
+                &lt;div class="account-name"&gt;Chase Checking&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="account-balance"&gt;$15,234.56&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="account-actions"&gt;
+        &lt;div class="dropdown"&gt;...&lt;/div&gt;
+        &lt;label class="switch"&gt;
+            &lt;input type="checkbox" checked&gt;
+            &lt;span class="slider"&gt;&lt;/span&gt;
+        &lt;/label&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+        </div>
+    </div>
+
+    <!-- Edit Account Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Account</h3>
+                <button class="close-button" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label class="form-label" for="editName">Account Name</label>
+                    <input type="text" id="editName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editType">Account Type</label>
+                    <select id="editType" class="form-input">
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                        <option value="credit">Credit Card</option>
+                        <option value="investment">Investment</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editBalance">Balance</label>
+                    <input type="number" id="editBalance" class="form-input" step="0.01">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px;">
+                    <button type="button" class="button button-secondary" onclick="closeModal('editModal')">
+                        Cancel
+                    </button>
+                    <button type="submit" class="button button-primary" id="saveButton">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Account</h3>
+                <button class="close-button" onclick="closeModal('deleteModal')">&times;</button>
+            </div>
+            <p style="margin-bottom: 20px; color: #6b7280;">
+                You are about to delete a bank account. If you proceed, all transactions 
+                associated with this account will also be deleted.
+            </p>
+            <div class="form-group">
+                <label class="form-label" for="confirmDelete">
+                    Type <strong>DELETE</strong> to confirm.
+                </label>
+                <input type="text" id="confirmDelete" class="form-input" placeholder="DELETE">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px;">
+                <button type="button" class="button button-secondary" onclick="closeModal('deleteModal')">
+                    Cancel
+                </button>
+                <button type="button" class="button button-danger" id="confirmDeleteButton" onclick="deleteAccount()" disabled>
+                    <span id="deleteSpinner" class="loading-spinner" style="display: none;"></span>
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let accounts = [];
+        let accountIdCounter = 1;
+        let currentEditingAccount = null;
+        let currentDeletingAccount = null;
+
+        // Utility functions
+        function getInitials(name) {
+            return name.split(' ').map(word => word[0]).join('').toUpperCase();
+        }
+
+        function formatAmount(amount, currency) {
+            try {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: currency
+                }).format(amount);
+            } catch (error) {
+                return `${currency} ${amount.toFixed(2)}`;
+            }
+        }
+
+        // Account management functions
+        function addAccount() {
+            const name = document.getElementById('accountName').value;
+            const balance = parseFloat(document.getElementById('accountBalance').value) || 0;
+            const currency = document.getElementById('accountCurrency').value;
+            const type = document.getElementById('accountType').value;
+
+            if (!name.trim()) {
+                alert('Please enter an account name');
+                return;
+            }
+
+            const account = {
+                id: `account-${accountIdCounter++}`,
+                name: name.trim(),
+                balance,
+                currency,
+                type,
+                enabled: true
+            };
+
+            accounts.push(account);
+            renderAccounts();
+            clearForm();
+        }
+
+        function clearForm() {
+            document.getElementById('accountName').value = '';
+            document.getElementById('accountBalance').value = '';
+            document.getElementById('accountCurrency').value = 'USD';
+            document.getElementById('accountType').value = 'checking';
+        }
+
+        function renderAccounts() {
+            const container = document.getElementById('accountsList');
+            container.innerHTML = '';
+
+            if (accounts.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">No accounts added yet. Use the form above to add your first account.</p>';
+                return;
+            }
+
+            accounts.forEach(account => {
+                const accountElement = createAccountElement(account);
+                container.appendChild(accountElement);
+            });
+        }
+
+        function createAccountElement(account) {
+            const div = document.createElement('div');
+            div.className = `bank-account ${!account.enabled ? 'disabled' : ''}`;
+            div.innerHTML = `
+                <div class="account-info">
+                    <div class="avatar">${getInitials(account.name)}</div>
+                    <div class="account-details">
+                        <div>
+                            <div class="account-name">${account.name}</div>
+                        </div>
+                        <div class="account-balance">${formatAmount(account.balance, account.currency)}</div>
+                    </div>
+                </div>
+                <div class="account-actions">
+                    <div class="dropdown">
+                        <button class="dropdown-trigger" onclick="toggleDropdown(this)">
+                            ⋯
+                        </button>
+                        <div class="dropdown-content">
+                            <button class="dropdown-item" onclick="editAccount('${account.id}')">Edit</button>
+                            <div class="dropdown-separator"></div>
+                            <button class="dropdown-item" onclick="importTransactions('${account.id}')">Import</button>
+                            <div class="dropdown-separator"></div>
+                            <button class="dropdown-item danger" onclick="confirmDelete('${account.id}')">Remove</button>
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" ${account.enabled ? 'checked' : ''} onchange="toggleAccount(this, '${account.id}')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            `;
+            return div;
+        }
+
+        // Dropdown functionality
+        function toggleDropdown(trigger) {
+            const dropdown = trigger.parentElement;
+            const content = dropdown.querySelector('.dropdown-content');
+            
+            // Close all other dropdowns
+            document.querySelectorAll('.dropdown-content.show').forEach(d => {
+                if (d !== content) d.classList.remove('show');
+            });
+            
+            content.classList.toggle('show');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown-content.show').forEach(d => {
+                    d.classList.remove('show');
+                });
+            }
+        });
+
+        // Account actions
+        function toggleAccount(checkbox, accountId) {
+            const account = accounts.find(a => a.id === accountId);
+            if (account) {
+                account.enabled = checkbox.checked;
+                renderAccounts();
+            }
+            
+            console.log(`Account ${accountId} ${checkbox.checked ? 'enabled' : 'disabled'}`);
+        }
+
+        function editAccount(accountId) {
+            const account = accounts.find(a => a.id === accountId) || {
+                id: accountId,
+                name: accountId.includes('chase') ? 'Chase Checking' : 
+                      accountId.includes('boa') ? 'Bank of America Savings' : 'Citi Credit Card',
+                type: 'checking',
+                balance: 0
+            };
+            
+            currentEditingAccount = account;
+            
+            document.getElementById('editName').value = account.name;
+            document.getElementById('editType').value = account.type;
+            document.getElementById('editBalance').value = account.balance || 0;
+            
+            openModal('editModal');
+        }
+
+        function importTransactions(accountId) {
+            console.log(`Importing transactions for account: ${accountId}`);
+            alert(`Import functionality would be triggered for account: ${accountId}`);
+        }
+
+        function confirmDelete(accountId) {
+            currentDeletingAccount = accountId;
+            document.getElementById('confirmDelete').value = '';
+            document.getElementById('confirmDeleteButton').disabled = true;
+            openModal('deleteModal');
+        }
+
+        function deleteAccount() {
+            if (!currentDeletingAccount) return;
+            
+            const deleteButton = document.getElementById('confirmDeleteButton');
+            const spinner = document.getElementById('deleteSpinner');
+            
+            // Show loading state
+            deleteButton.disabled = true;
+            spinner.style.display = 'inline-block';
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Remove from accounts array
+                accounts = accounts.filter(a => a.id !== currentDeletingAccount);
+                renderAccounts();
+                
+                // Hide loading state
+                spinner.style.display = 'none';
+                closeModal('deleteModal');
+                currentDeletingAccount = null;
+                
+                console.log(`Account ${currentDeletingAccount} deleted`);
+            }, 1500);
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Form handling
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentEditingAccount) return;
+            
+            const saveButton = document.getElementById('saveButton');
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<span class="loading-spinner"></span>Saving...';
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Update account
+                if (accounts.find(a => a.id === currentEditingAccount.id)) {
+                    const account = accounts.find(a => a.id === currentEditingAccount.id);
+                    account.name = document.getElementById('editName').value;
+                    account.type = document.getElementById('editType').value;
+                    account.balance = parseFloat(document.getElementById('editBalance').value) || 0;
+                    renderAccounts();
+                }
+                
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Save Changes';
+                closeModal('editModal');
+                currentEditingAccount = null;
+                
+                console.log('Account updated successfully');
+            }, 1000);
+        });
+
+        // Delete confirmation input validation
+        document.getElementById('confirmDelete').addEventListener('input', function(e) {
+            const confirmButton = document.getElementById('confirmDeleteButton');
+            confirmButton.disabled = e.target.value !== 'DELETE';
+        });
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal(this.id);
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAccounts();
+        });
+    </script>
+</body>
+</html>
