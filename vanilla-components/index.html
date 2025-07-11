@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanilla JavaScript Component Library</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+
+        .header .subtitle {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 50px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 32px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+        }
+
+        .component-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .component-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .component-preview {
+            height: 220px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .component-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 20%, rgba(59, 130, 246, 0.1) 50%, transparent 80%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .component-card:hover .component-preview::before {
+            opacity: 1;
+        }
+
+        .preview-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        .preview-content {
+            text-align: center;
+            z-index: 1;
+            position: relative;
+        }
+
+        .preview-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .preview-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .component-info {
+            padding: 24px;
+        }
+
+        .component-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .component-description {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .component-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tag {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tag.dashboard {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .tag.ui {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .tag.shared {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .component-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .view-button {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .view-button:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .component-status {
+            font-size: 12px;
+            color: #16a34a;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #16a34a;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 80px;
+        }
+
+        .footer h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .component-preview {
+                height: 180px;
+            }
+
+            .preview-icon {
+                font-size: 3rem;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .component-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .component-card:nth-child(1) { animation-delay: 0.1s; }
+        .component-card:nth-child(2) { animation-delay: 0.2s; }
+        .component-card:nth-child(3) { animation-delay: 0.3s; }
+        .component-card:nth-child(4) { animation-delay: 0.4s; }
+        .component-card:nth-child(5) { animation-delay: 0.5s; }
+        .component-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎨 Component Showcase</h1>
+            <p>A collection of beautifully crafted vanilla JavaScript components converted from React, ready to use in any web project.</p>
+            <div class="subtitle">✨ No frameworks required • Pure HTML, CSS & JavaScript</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Components</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Responsive</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Dependencies</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">🚀</div>
+                <div class="stat-label">Performance</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Components -->
+        <div class="section">
+            <h2 class="section-title">📊 Dashboard Components</h2>
+            <div class="components-grid">
+                <a href="dashboard/dashboard-overview.html" class="component-card">
+                    <div class="component-preview">
+                        <div class="preview-content">
+                            <div class="preview-icon">📊</div>
+                            <div class="preview-title">Interactive Dashboard</div>
+                            <div class="preview-subtitle">Stats • Charts • Activity</div>
+                        </div>
+                    </div>
+                    <div class="component-info">
+                        <h3 class="component-name">Dashboard Overview</h3>
+                        <p class="component-description">
+                            Comprehensive dashboard with key metrics, account cards, activity feed, and quick actions. Features animated statistics and responsive design.
+                        </p>
+                        <div class="component-tags">
+                            <span class="tag dashboard">Dashboard</span>
+                            <span class="tag">Analytics</span>
+                            <span class="tag">Charts</span>
+                        </div>
+                        <div class="component-footer">
+                            <div class="component-status">
+                                <div class="status-dot"></div>
+                                <span>Ready</span>
+                            </div>
+                            <span class="view-button">View Component</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="dashboard/bank-account.html" class="component-card">
+                    <div class="component-preview">
+                        <div class="preview-content">
+                            <div class="preview-icon">🏦</div>
+                            <div class="preview-title">Bank Account Manager</div>
+                            <div class="preview-subtitle">CRUD • Modals • Forms</div>
+                        </div>
+                    </div>
+                    <div class="component-info">
+                        <h3 class="component-name">Bank Account Component</h3>
+                        <p class="component-description">
+                            Full-featured bank account management with add, edit, delete functionality. Includes modals, dropdowns, and toggle switches.
+                        </p>
+                        <div class="component-tags">
+                            <span class="tag dashboard">Dashboard</span>
+                            <span class="tag">Forms</span>
+                            <span class="tag">Modals</span>
+                            <span class="tag">CRUD</span>
+                        </div>
+                        <div class="component-footer">
+                            <div class="component-status">
+                                <div class="status-dot"></div>
+                                <span>Ready</span>
+                            </div>
+                            <span class="view-button">View Component</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- UI Components -->
+        <div class="section">
+            <h2 class="section-title">🎨 UI Components</h2>
+            <div class="components-grid">
+                <a href="ui/button.html" class="component-card">
+                    <div class="component-preview">
+                        <div class="preview-content">
+                            <div class="preview-icon">🔘</div>
+                            <div class="preview-title">Button Variants</div>
+                            <div class="preview-subtitle">All Styles • Interactive</div>
+                        </div>
+                    </div>
+                    <div class="component-info">
+                        <h3 class="component-name">Button Component</h3>
+                        <p class="component-description">
+                            Versatile button component with multiple variants (default, destructive, outline), sizes, states, and loading animations.
+                        </p>
+                        <div class="component-tags">
+                            <span class="tag ui">UI</span>
+                            <span class="tag">Interactive</span>
+                            <span class="tag">Variants</span>
+                        </div>
+                        <div class="component-footer">
+                            <div class="component-status">
+                                <div class="status-dot"></div>
+                                <span>Ready</span>
+                            </div>
+                            <span class="view-button">View Component</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="ui/card.html" class="component-card">
+                    <div class="component-preview">
+                        <div class="preview-content">
+                            <div class="preview-icon">🎴</div>
+                            <div class="preview-title">Card Layouts</div>
+                            <div class="preview-subtitle">Headers • Content • Actions</div>
+                        </div>
+                    </div>
+                    <div class="component-info">
+                        <h3 class="component-name">Card Component</h3>
+                        <p class="component-description">
+                            Flexible content container with header, body, and footer sections. Multiple variants and dashboard-style examples included.
+                        </p>
+                        <div class="component-tags">
+                            <span class="tag ui">UI</span>
+                            <span class="tag">Layout</span>
+                            <span class="tag">Container</span>
+                        </div>
+                        <div class="component-footer">
+                            <div class="component-status">
+                                <div class="status-dot"></div>
+                                <span>Ready</span>
+                            </div>
+                            <span class="view-button">View Component</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Shared Components -->
+        <div class="section">
+            <h2 class="section-title">🔧 Shared Components</h2>
+            <div class="components-grid">
+                <a href="shared/format-amount.html" class="component-card">
+                    <div class="component-preview">
+                        <div class="preview-content">
+                            <div class="preview-icon">💰</div>
+                            <div class="preview-title">Currency Formatter</div>
+                            <div class="preview-subtitle">i18n • Localization</div>
+                        </div>
+                    </div>
+                    <div class="component-info">
+                        <h3 class="component-name">Format Amount</h3>
+                        <p class="component-description">
+                            Utility component for formatting currency amounts with internationalization support. Multiple currencies and locales.
+                        </p>
+                        <div class="component-tags">
+                            <span class="tag shared">Shared</span>
+                            <span class="tag">Utility</span>
+                            <span class="tag">i18n</span>
+                        </div>
+                        <div class="component-footer">
+                            <div class="component-status">
+                                <div class="status-dot"></div>
+                                <span>Ready</span>
+                            </div>
+                            <span class="view-button">View Component</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <h3>🚀 Ready to Use</h3>
+            <p>
+                All components are standalone HTML files with embedded CSS and JavaScript.<br>
+                Simply open any component file in your browser to preview and interact with it.<br>
+                Copy the code and customize it for your projects!
+            </p>
+            <br>
+            <p style="font-size: 14px; opacity: 0.7;">
+                Originally converted from a React dashboard application to vanilla JavaScript.<br>
+                Perfect for projects that need lightweight, framework-free components.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate stats on scroll
+            const observerOptions = {
+                threshold: 0.5,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const statValue = entry.target.querySelector('.stat-value');
+                        const finalValue = statValue.textContent;
+                        
+                        if (finalValue !== '🚀' && finalValue !== '100%' && finalValue !== '0') {
+                            // Animate number counting
+                            let current = 0;
+                            const target = parseInt(finalValue);
+                            const increment = target / 20;
+                            
+                            const timer = setInterval(() => {
+                                current += increment;
+                                if (current >= target) {
+                                    current = target;
+                                    clearInterval(timer);
+                                }
+                                statValue.textContent = Math.floor(current);
+                            }, 50);
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe stat cards
+            document.querySelectorAll('.stat-card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // Add ripple effect to component cards
+            document.querySelectorAll('.component-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('view-button')) {
+                        e.preventDefault();
+                        
+                        // Create ripple effect
+                        const ripple = document.createElement('span');
+                        const rect = this.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        
+                        ripple.style.cssText = `
+                            position: absolute;
+                            border-radius: 50%;
+                            background: rgba(59, 130, 246, 0.3);
+                            transform: scale(0);
+                            animation: ripple 0.6s linear;
+                            pointer-events: none;
+                            width: ${size}px;
+                            height: ${size}px;
+                            left: ${e.clientX - rect.left - size/2}px;
+                            top: ${e.clientY - rect.top - size/2}px;
+                        `;
+                        
+                        this.style.position = 'relative';
+                        this.style.overflow = 'hidden';
+                        this.appendChild(ripple);
+                        
+                        setTimeout(() => {
+                            // Navigate to the component
+                            window.location.href = this.href;
+                        }, 300);
+                        
+                        setTimeout(() => {
+                            if (ripple.parentNode) {
+                                ripple.parentNode.removeChild(ripple);
+                            }
+                        }, 600);
+                        
+                        return false;
+                    }
+                });
+            });
+
+            // Add hover effects to preview content
+            document.querySelectorAll('.component-preview').forEach(preview => {
+                preview.addEventListener('mouseenter', function() {
+                    const icon = this.querySelector('.preview-icon');
+                    if (icon) {
+                        icon.style.transform = 'scale(1.1) rotate(5deg)';
+                        icon.style.transition = 'transform 0.3s ease';
+                    }
+                });
+
+                preview.addEventListener('mouseleave', function() {
+                    const icon = this.querySelector('.preview-icon');
+                    if (icon) {
+                        icon.style.transform = 'scale(1) rotate(0deg)';
+                    }
+                });
+            });
+        });
+
+        // Add ripple animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

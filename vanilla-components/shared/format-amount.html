@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Format Amount Component</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 40px;
+            background: #f8f9fa;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #f9fafb;
+        }
+
+        .amount {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .amount.positive {
+            color: #00C969;
+        }
+
+        .amount.negative {
+            color: #ef4444;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        .input-group {
+            margin: 10px 0;
+        }
+
+        .input-group label {
+            display: inline-block;
+            width: 120px;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .code-example {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FormatAmount Component</h1>
+        <p>A utility component for formatting currency amounts with internationalization support.</p>
+
+        <div class="demo-section">
+            <h3>Live Demo</h3>
+            <div id="formatted-amount" class="amount">$1,234.56</div>
+            
+            <div class="controls">
+                <div class="input-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" value="1234.56" step="0.01">
+                </div>
+                
+                <div class="input-group">
+                    <label for="currency">Currency:</label>
+                    <select id="currency">
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                        <option value="JPY">JPY</option>
+                        <option value="SEK">SEK</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="locale">Locale:</label>
+                    <select id="locale">
+                        <option value="en-US">en-US</option>
+                        <option value="en-GB">en-GB</option>
+                        <option value="sv-SE">sv-SE</option>
+                        <option value="de-DE">de-DE</option>
+                        <option value="fr-FR">fr-FR</option>
+                        <option value="ja-JP">ja-JP</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="maxDecimals">Max Decimals:</label>
+                    <input type="number" id="maxDecimals" value="2" min="0" max="4">
+                </div>
+
+                <button onclick="updateAmount()">Update Format</button>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h3>Examples</h3>
+            <div id="examples"></div>
+        </div>
+
+        <div class="code-example">
+            <h4 style="margin-top: 0; color: #60a5fa;">JavaScript Implementation</h4>
+            <pre>function formatAmount({
+    locale = 'en-US',
+    amount,
+    currency,
+    maximumFractionDigits = 2,
+    minimumFractionDigits = 2
+}) {
+    try {
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currency,
+            maximumFractionDigits,
+            minimumFractionDigits
+        }).format(amount);
+    } catch (error) {
+        return `${currency} ${amount.toFixed(maximumFractionDigits)}`;
+    }
+}</pre>
+        </div>
+    </div>
+
+    <script>
+        // FormatAmount utility function
+        function formatAmount({
+            locale = 'en-US',
+            amount,
+            currency,
+            maximumFractionDigits = 2,
+            minimumFractionDigits = 2
+        }) {
+            try {
+                return new Intl.NumberFormat(locale, {
+                    style: 'currency',
+                    currency: currency,
+                    maximumFractionDigits,
+                    minimumFractionDigits
+                }).format(amount);
+            } catch (error) {
+                console.error('Error formatting amount:', error);
+                return `${currency} ${amount.toFixed(maximumFractionDigits)}`;
+            }
+        }
+
+        // Update the displayed amount
+        function updateAmount() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const currency = document.getElementById('currency').value;
+            const locale = document.getElementById('locale').value;
+            const maxDecimals = parseInt(document.getElementById('maxDecimals').value) || 2;
+
+            const formatted = formatAmount({
+                amount,
+                currency,
+                locale,
+                maximumFractionDigits: maxDecimals,
+                minimumFractionDigits: maxDecimals
+            });
+
+            const amountElement = document.getElementById('formatted-amount');
+            amountElement.textContent = formatted;
+            
+            // Add color based on positive/negative
+            amountElement.className = 'amount ' + (amount >= 0 ? 'positive' : 'negative');
+        }
+
+        // Generate examples
+        function generateExamples() {
+            const examples = [
+                { amount: 1234.56, currency: 'USD', locale: 'en-US' },
+                { amount: -567.89, currency: 'EUR', locale: 'de-DE' },
+                { amount: 10000, currency: 'JPY', locale: 'ja-JP' },
+                { amount: 999.99, currency: 'GBP', locale: 'en-GB' },
+                { amount: 15000.50, currency: 'SEK', locale: 'sv-SE' }
+            ];
+
+            const examplesContainer = document.getElementById('examples');
+            examplesContainer.innerHTML = '';
+
+            examples.forEach(example => {
+                const formatted = formatAmount(example);
+                const div = document.createElement('div');
+                div.style.cssText = 'margin: 10px 0; padding: 10px; background: white; border-radius: 4px; border-left: 4px solid #3b82f6;';
+                div.innerHTML = `
+                    <strong>${formatted}</strong><br>
+                    <small style="color: #6b7280;">
+                        Amount: ${example.amount}, 
+                        Currency: ${example.currency}, 
+                        Locale: ${example.locale}
+                    </small>
+                `;
+                examplesContainer.appendChild(div);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAmount();
+            generateExamples();
+
+            // Add event listeners for real-time updates
+            ['amount', 'currency', 'locale', 'maxDecimals'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updateAmount);
+                document.getElementById(id).addEventListener('change', updateAmount);
+            });
+        });
+    </script>
+</body>
+</html>
